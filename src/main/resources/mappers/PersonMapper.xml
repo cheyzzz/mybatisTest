@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chey.mapper.PersonMapper">
+
+
+
+
+    <insert id="insertPerson">
+        insert into person value(null,'chey',22)
+    </insert>
+    <update id="updatePerson">
+        update person set name = 'zzz' where name = 'chey2'
+    </update>
+    <delete id="deletePerson">
+        delete from person where id = 4
+    </delete>
+    <select id="queryPerson" resultType="com.chey.pojo.Person">
+        select * from person where id = 1
+    </select>
+
+    <resultMap id="personResultMap" type="com.chey.pojo.Person">
+        <id property="id" column="id_"></id>
+        <result property="name" column="name_"></result>
+        <result property="age" column="age_"></result>
+    </resultMap>
+    <select id="queryPersonList" resultMap="personResultMap">
+        <!--select id_ id,name_ name ,age_ age from person-->
+        select * from person
+    </select>
+    <select id="queryPersonByName" resultType="com.chey.pojo.Person">
+        select * from person where name = '${name}'
+    </select>
+    <select id="queryPersonByNameAndAge" resultType="com.chey.pojo.Person">
+        select * from person where name = '${param1}' and age = #{arg1}
+    </select>
+    <select id="queryPersonByMap" resultType="com.chey.pojo.Person">
+        select * from person where name = '${name}' and age = #{age}
+    </select>
+    <select id="queryPersonByClass" resultType="com.chey.pojo.Person">
+        select * from person where name = '${name}' and age = #{age}
+    </select>
+    <select id="queryPersonByParam" resultType="com.chey.pojo.Person">
+        select * from person where name = '${userName}' and age = #{ageNum}
+    </select>
+    <select id="queryPersonByIdToMap" resultType="map">
+        select * from person where id = #{id}
+    </select>
+    <select id="queryPersonCountById" resultType="integer">
+        select count(*) from person where id = #{id}
+    </select>
+    <select id="queryPersonMapListByAge" resultType="com.chey.pojo.Person">
+        select * from person where age = #{age}
+    </select>
+    <select id="queryPersonMapKeyByAge" resultType="com.chey.pojo.Person">
+        select * from person where age = #{age}
+    </select>
+    <select id="queryPersonUseLike" resultType="com.chey.pojo.Person">
+        <!--select * from person where age like "%${age}%"-->
+        select * from person where age like concat("%",#{age},"%")
+        <!--select * from person where age like "%"#{age}"%"-->
+    </select>
+    <select id="deletePersonBatch">
+        delete from person where age in (${ages})
+    </select>
+    <select id="setTableName" resultType="map">
+        select * from ${tableName}
+    </select>
+    <insert id="insertPersonByParam">
+        insert into person value (null ,#{name},#{age})
+    </insert>
+    <insert id="insertPersonAutoByParam" useGeneratedKeys="true" keyProperty="id">
+        insert into person value (null ,#{name},#{age})
+    </insert>
+
+    <resultMap id="personAndCityResultMap" type="com.chey.pojo.Person">
+        <id property="id" column="id_"></id>
+        <result property="name" column="name_"></result>
+        <result property="age" column="age_"></result>
+        <result property="city.cid" column="cid_"></result>
+        <result property="city.cname" column="cname_"></result>
+    </resultMap>
+    <select id="queryPersonAndCity" resultMap="personAndCityResultMap">
+        select * from person left join city on person.cityId_ = city.cid_ where person.id_ = #{id}
+    </select>
+
+    <resultMap id="personAndCityAssoResultMap" type="com.chey.pojo.Person">
+        <id property="id" column="id_"></id>
+        <result property="name" column="name_"></result>
+        <result property="age" column="age_"></result>
+        <association property="city" javaType="com.chey.pojo.City">
+            <id property="cid" column="cid_"></id>
+            <result property="cname" column="cname_"></result>
+            <result property="countryCode" column="Country_Code_"></result>
+            <result property="district" column="District_"></result>
+            <result property="population" column="Population_"></result>
+        </association>
+    </resultMap>
+    <select id="queryPersonAndCityAsso" resultMap="personAndCityAssoResultMap">
+        select * from person left join city on person.cityId_ = city.cid_ where person.id_ = #{id}
+    </select>
+
+    <resultMap id="queryPersonThenCityResultMap" type="com.chey.pojo.Person">
+        <id property="id" column="id_"></id>
+        <result property="name" column="name_"></result>
+        <result property="age" column="age_"></result>
+        <association property="city"
+                     select="com.chey.mapper.CityMapper.queryPersonThenCityByStep"
+                     column="cityId_"
+                     fetchType="lazy"></association>
+    </resultMap>
+    <select id="queryPersonThenCity" resultMap="queryPersonThenCityResultMap">
+        select * from person where person.id_ = #{id}
+    </select>
+
+    <select id="queryCityThenPersonByStep" resultType="com.chey.pojo.Person">
+        select * from person where person.cityId_ = #{id}
+    </select>
+
+    <select id="queryPersonListDynamicUseTest" resultType="com.chey.pojo.Person">
+        select * from person where 1=1
+        <if test="id != null and id != '' ">
+            and id_ = #{id}
+        </if>
+        <if test="name != null and name != '' ">
+            and name_ = #{name}
+        </if>
+        <if test="age != null and age != '' ">
+            and age_ = #{age}
+        </if>
+    </select>
+
+    <select id="queryPersonListDynamicUseWhere" resultType="com.chey.pojo.Person">
+        select * from person
+        <where>
+            <if test="id != null and id != '' ">
+                and id_ = #{id}
+            </if>
+            <if test="name != null and name != '' ">
+                and name_ = #{name}
+            </if>
+            <if test="age != null and age != '' ">
+                and age_ = #{age}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPersonListDynamicUseTrim" resultType="com.chey.pojo.Person">
+        select * from person
+        <trim prefix="where" suffix="" prefixOverrides="and|or" suffixOverrides="and|or">
+            <if test="id != null and id != '' ">
+                id_ = #{id} and
+            </if>
+            <if test="name != null and name != '' ">
+                name_ = #{name} or
+            </if>
+            <if test="age != null and age != '' ">
+                age_ = #{age} or
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="queryPersonListDynamicUsechoose" resultType="com.chey.pojo.Person">
+        select * from person
+        <where>
+            <choose>
+                <when test="id != null and id != '' ">
+                    id_ = #{id}
+                </when>
+                <when test="name != null and name != '' ">
+                    name_ = #{name}
+                </when>
+                <when test="age != null and age != '' ">
+                    age_ = #{age}
+                </when>
+                <otherwise>
+                    id_ = 1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <delete id="queryPersonListDynamicUseforeachDel1">
+        delete from person where id_ in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="queryPersonListDynamicUseforeachDel2">
+        delete from person where
+        <foreach collection="ids" item="id" separator="or">
+            id_ = #{id}
+        </foreach>
+    </delete>
+
+    <insert id="queryPersonListDynamicUseforeachInsert">
+        insert into person values
+        <foreach collection="persons" item="person" separator=",">
+            (null,#{person.name},#{person.age},null)
+        </foreach>
+    </insert>
+
+    <sql id="personSql" >id_,name_,age_</sql>
+    <select id="queryPersonListDynamicUseSql" resultType="com.chey.pojo.Person">
+        select <include refid="personSql"></include> from person where person.id_ = #{id}
+    </select>
+</mapper>

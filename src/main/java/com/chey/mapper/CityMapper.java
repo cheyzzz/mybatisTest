@@ -1,14 +1,24 @@
 package com.chey.mapper;
 
+import com.chey.pojo.City;
+import com.chey.pojo.Person;
+import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author chey
- * @Date 2022-07-18 18:49
- * @Describe  mybatis面向接口编程
- *              映射文件mapper.xml的namespace要和mapper接口全类名保持一致
- *              映射文件mapper.xml的sql语句id要和mapper接口中的方法名一致
+ * @Date 2022-07-19 14:37
+ * @Describe  面向接口编程
  */
 public interface CityMapper {
 
-    int insertCity();
+    List<City> queryCityList();
+    List<City> queryPersonThenCityByStep(@Param("id") Integer id);
 
+    List<City> queryCityAndPerson(@Param("id") Integer id);
+    List<City> queryCityThenPerson(@Param("id") Integer id);
 }

@@ -4,19 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @Author chey
- * @Date 2022-07-18 18:43
+ * @Date 2022-08-07 22:10
  * @Describe
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class city {
-    private Integer id;
-    private String name;
+public class City {
+
+    private Integer cid;
+    private String cname;
     private String countryCode;
     private String district;
-    private long population;
+    private String population;
+    private List<Person> persons;
 
 }
