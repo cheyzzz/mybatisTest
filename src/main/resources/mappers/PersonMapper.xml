@@ -6,6 +6,12 @@
 
 
 
+    <cache blocking=""/>
+    <cache eviction=""/>
+    <cache flushInterval=""/>
+    <cache readOnly=""/>
+    <cache size=""/>
+    <cache type=""/>
 
     <insert id="insertPerson">
         insert into person value(null,'chey',22)

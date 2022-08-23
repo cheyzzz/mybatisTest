@@ -324,4 +324,55 @@ public class MybatisTest {
         List<Person> list5 = mapper.queryPersonListDynamicUseSql(5);
         list5.forEach(System.out::println);
     }
+
+    /**
+     * @Author: chey
+     * @Date: 2022/8/20 11:31
+     * @Param: []
+     * @Return: void
+     * @Description: 一级缓存  同个sqlsession查询会被缓存
+     */
+    @Test
+    public void firstCacheTest(){
+        Person person = new Person(1, null, null, null);
+        SqlSession sqlSession = SqlSessionUtil.getSqlSession();
+        PersonMapper mapper1 = sqlSession.getMapper(PersonMapper.class);
+        List<Person> list1 = mapper1.queryPersonListDynamicUseTest(person);
+        list1.forEach(System.out::println);
+//        sqlSession.clearCache();//清缓存
+        System.out.println("-----------");
+        PersonMapper mapper2 = sqlSession.getMapper(PersonMapper.class);
+        List<Person> list2 = mapper2.queryPersonListDynamicUseTest(person);
+        list2.forEach(System.out::println);
+        System.out.println("-----------");
+    }
+
+    /**
+     * @Author: chey
+     * @Date: 2022/8/20 11:37
+     * @Param:
+     * @Return:
+     * @Description: 二极缓存 同个sqlSessionFactory查询会被缓存
+     */
+    @Test
+    public void secondCacheTest(){
+        Person person = new Person(1, null, null, null);
+        try {
+            InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+            PersonMapper mapper1 = sqlSession1.getMapper(PersonMapper.class);
+            List<Person> list1 = mapper1.queryPersonListDynamicUseTest(person);
+            list1.forEach(System.out::println);
+            sqlSession1.close();
+            System.out.println("-----------");
+            SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
+            PersonMapper mapper2 = sqlSession2.getMapper(PersonMapper.class);
+            List<Person> list2 = mapper2.queryPersonListDynamicUseTest(person);
+            list2.forEach(System.out::println);
+            System.out.println("-----------");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
